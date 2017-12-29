@@ -1,27 +1,15 @@
-﻿/*
-
- 
- 
- */
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DotNetSMPP
+namespace TestClient
 {
-    public class SMPPClient
+    class Program
     {
-
-
-        public SMPPClient()
+        static void Main(string[] args)
         {
-
-
-
         }
-
     }
 }
