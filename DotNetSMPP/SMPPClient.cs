@@ -9,5 +9,10 @@ namespace DotNetSMPP
     public class SMPPClient
     {
 
+        public SMPPClient()
+        {
+
+        }
+
     }
 }
