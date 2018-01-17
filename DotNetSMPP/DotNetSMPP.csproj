@@ -43,10 +43,13 @@
     <Compile Include="Parameter\CommandStatus.cs" />
     <Compile Include="Parameter\CommnadType.cs" />
     <Compile Include="Parameter\InterfaceVersion.cs" />
+    <Compile Include="Parameter\TLVTag.cs" />
     <Compile Include="Protocol\BindRequestPDU.cs" />
     <Compile Include="Protocol\PDU.cs" />
     <Compile Include="Protocol\ProtocolHelper.cs" />
     <Compile Include="Protocol\BindResponsePDU.cs" />
+    <Compile Include="Protocol\SubmitSMRespPDU.cs" />
+    <Compile Include="Protocol\UnknownPDU.cs" />
     <Compile Include="SequenceProvider.cs" />
     <Compile Include="SMPPClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

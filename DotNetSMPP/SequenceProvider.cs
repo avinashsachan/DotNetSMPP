@@ -9,7 +9,7 @@ namespace DotNetSMPP
     public class SequenceProvider
     {
         private int _seq { get; set; }
-        public object Obj_Seq = new object();
+        private object Obj_Seq = new object();
         public SequenceProvider()
         {
             _seq = 1;
@@ -20,6 +20,14 @@ namespace DotNetSMPP
             lock (Obj_Seq)
             {
                 return _seq++;
+            }
+        }
+
+        internal void Reset()
+        {
+            lock (Obj_Seq)
+            {
+                _seq = 1;
             }
         }
     }

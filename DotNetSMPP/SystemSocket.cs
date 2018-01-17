@@ -25,8 +25,8 @@ namespace DotNetSMPP
         /// <summary>
         /// socket , for smpp we need TCP stream socket to connect to server
         /// </summary>
-        private Socket _s;
-
+        private Socket _socket;
+        private object objSocketLock = new Object();
 
 
         /// <summary>
@@ -61,19 +61,19 @@ namespace DotNetSMPP
             var result = IPAddress.TryParse(hostname, out ipAddr);
             if (!result) throw new Exception("Invalid hostname");
             iep = new IPEndPoint(ipAddr, port);
-            _s = new Socket(iep.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+            _socket = new Socket(iep.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
         }
 
         public bool Connect()
         {
             try
             {
-                _s.Connect(iep);
-                if (!_s.Connected) throw new Exception("Failed to connect");
-
+                _socket.Connect(iep);
+                if (!_socket.Connected) throw new Exception("Failed to connect");
+                
                 //here we need to create a listner to capture server returns 
                 AsyncCallback asyncCallback = new AsyncCallback(OnDataRecieve);
-                _s.BeginReceive(_mbuff, 0, _mbuff.Length, SocketFlags.None, asyncCallback, _s);
+                _socket.BeginReceive(_mbuff, 0, _mbuff.Length, SocketFlags.None, asyncCallback, _socket);
                 return true;
             }
             catch (Exception ex)
@@ -85,17 +85,23 @@ namespace DotNetSMPP
 
 
         }
+
+        /// <summary>
+        /// State of socket
+        /// </summary>
         public bool IsConnected
         {
             get
             {
-                try { return _s.Connected; }
+                try { return _socket.Connected; }
                 catch { return false; }
             }
         }
+
+
         public void Disconnect()
         {
-            try { if (this.IsConnected) { _s.Disconnect(false); } }
+            try { if (this.IsConnected) { _socket.Disconnect(false); } }
             catch { }
         }
 
@@ -122,12 +128,20 @@ namespace DotNetSMPP
                 OnPacketRecieved(p);
 
                 //here create some delay just to save CPU
-                //
                 //Thread.Sleep(5);
 
-                //and again set buffer to recieve
-                AsyncCallback asyncCallback = new AsyncCallback(OnDataRecieve);
-                _s.BeginReceive(_mbuff, 0, _mbuff.Length, SocketFlags.None, asyncCallback, sock);
+                //here check socket status if it is closed , raise this
+                if (sock.Connected)
+                {
+                    //and again set buffer to recieve
+                    AsyncCallback asyncCallback = new AsyncCallback(OnDataRecieve);
+                    sock.BeginReceive(_mbuff, 0, _mbuff.Length, SocketFlags.None, asyncCallback, sock);
+                }
+                else
+                {
+                    Console.WriteLine("Socket closed & Connection disconnected");
+
+                }
             }
             else
             {
@@ -146,20 +160,25 @@ namespace DotNetSMPP
             try
             {
                 if (!this.IsConnected) throw new Exception("Server Disconnected");
-                return _s.Send(bytestoSend, SocketFlags.None);
+                if (bytestoSend.Length == 0) return 0;
+                var i = 0;
+
+                //Here making sure that socket is accessed by one thread at a time 
+                //as multiple threads will access same smpp connection like enquire link , delivery , and submit sm
+                lock (objSocketLock)
+                {
+                   i =  _socket.Send(bytestoSend, SocketFlags.None);
+                }
+                return i;
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 //here handle this exception
-                return 0;
+                return -1;
             }
         }
 
-        //internal byte[] GetPacket()
-        //{
-        //    if (this.queue.Count == 0) return new byte[] { };
-        //    return this.queue.Dequeue();
-        //}
 
     }
 }

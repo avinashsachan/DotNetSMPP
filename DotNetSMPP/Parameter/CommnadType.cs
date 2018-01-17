@@ -25,5 +25,10 @@
 
         enquire_link = 0x00000015,
         enquire_link_resp = 0x80000015,
+
+
+        data_sm = 0x00000103,
+        data_sm_resp = 0x80000103,
+
     }
 }

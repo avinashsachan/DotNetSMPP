@@ -11,6 +11,17 @@ namespace Helper
 
         public static byte NullByte = 0;
 
+
+        public static byte[] ConvertIntToBytes(ushort input)
+        {
+            var p = BitConverter.GetBytes(input);
+            if (BitConverter.IsLittleEndian)
+            {
+                Array.Reverse(p);
+            }
+            return p;
+        }
+
         public static byte[] ConvertIntToBytes(Int32 input)
         {
             var p = BitConverter.GetBytes(input);
@@ -21,7 +32,15 @@ namespace Helper
             return p;
         }
 
-
+        public static byte[] ConvertIntToBytes(uint input)
+        {
+            var p = BitConverter.GetBytes(input);
+            if (BitConverter.IsLittleEndian)
+            {
+                Array.Reverse(p);
+            }
+            return p;
+        }
 
         public static int ConvertBytesToInt(byte[] input)
         {
