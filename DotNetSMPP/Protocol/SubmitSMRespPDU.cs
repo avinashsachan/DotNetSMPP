@@ -28,8 +28,8 @@ namespace DotNetSMPP
 
 
             this.command_length = Helper.HelperClass.ConvertBytesToInt(command_id);
-            this.command_id = (CommnadType)Helper.HelperClass.ConvertBytesToInt(command_id);
-            this.command_status = Helper.HelperClass.ConvertBytesToInt(command_status);
+            this.command_id = (CommanadType)Helper.HelperClass.ConvertBytesToInt(command_id);
+            this.command_status = (CommandStatus)Helper.HelperClass.ConvertBytesToInt(command_status);
             this.sequence_number = Helper.HelperClass.ConvertBytesToInt(sequence_number);
             this.message_id = Helper.HelperClass.ConvertBytesToString(msgId);
         }

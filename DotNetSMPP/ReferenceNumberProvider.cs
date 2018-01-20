@@ -2,16 +2,16 @@
 
 namespace DotNetSMPP
 {
-    public class SequenceProvider
+    class ReferenceNumberProvider
     {
-        private int _seq { get; set; }
+        private uint _seq { get; set; }
         private object Obj_Seq = new object();
-        public SequenceProvider()
+        public ReferenceNumberProvider()
         {
             _seq = 1;
         }
 
-        public int GetNumber()
+        public uint GetNumber()
         {
             lock (Obj_Seq)
             {
@@ -35,5 +35,4 @@ namespace DotNetSMPP
             }
         }
     }
-
 }

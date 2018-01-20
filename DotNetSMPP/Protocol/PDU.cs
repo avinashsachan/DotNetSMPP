@@ -9,8 +9,8 @@ namespace DotNetSMPP
     public abstract class PDU
     {
         public int command_length { get; set; }
-        public CommnadType command_id { get; set; }
-        public int command_status { get; set; }
+        public CommanadType command_id { get; set; }
+        public CommandStatus command_status { get; set; }
         public int sequence_number { get; set; }
         
     }

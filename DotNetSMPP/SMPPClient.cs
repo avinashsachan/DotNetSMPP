@@ -9,8 +9,6 @@ using Helper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DotNetSMPP
 {
@@ -34,7 +32,11 @@ namespace DotNetSMPP
         }
 
 
-        public SequenceProvider seqProvider = new SequenceProvider();
+        //this will provide sequnce number for each communication/PDU 
+        private SequenceProvider seqProvider = new SequenceProvider();
+        //this will provide reference number for "sar_msg_ref_num" TLV parameter in case of mylty part msg
+        private ReferenceNumberProvider refProvider = new ReferenceNumberProvider();
+
 
         public int Port { get; set; }
         public string Host { get; set; }
@@ -43,8 +45,8 @@ namespace DotNetSMPP
         public string SystemType { get; set; }
 
 
-
-        public CommnadType Mode { get; private set; }
+        public SMSTransmisstionMode sMSTransmisstionMode = SMSTransmisstionMode.DATA_MULTIPART;
+        public BindMode connectionBindMode { get; private set; }
 
         public InterfaceVersion interfaceVersion = InterfaceVersion.v34;
         public byte source_ton = 0;
@@ -95,7 +97,7 @@ namespace DotNetSMPP
         private SystemSocket _SystemSocket;
         private List<PDU> outputQueue = new List<PDU>();
 
-        public SMPPClient(string hostname, int port, string username, string password, string systemType, CommnadType bindMode)
+        public SMPPClient(string hostname, int port, string username, string password, string systemType, BindMode bindMode)
         {
 
             seqProvider = new SequenceProvider();
@@ -104,7 +106,7 @@ namespace DotNetSMPP
             this.SystemId = username;
             this.Password = password;
             this.SystemType = systemType;
-            this.Mode = bindMode;
+            this.connectionBindMode = bindMode;
         }
 
 
@@ -178,7 +180,7 @@ namespace DotNetSMPP
                 //here build ensure link packet
                 var sendByte = new List<byte>();
                 sendByte.AddRange(HelperClass.ConvertIntToBytes(16));
-                sendByte.AddRange(HelperClass.ConvertIntToBytes((uint)CommnadType.enquire_link));
+                sendByte.AddRange(HelperClass.ConvertIntToBytes((uint)CommanadType.enquire_link));
                 sendByte.AddRange(HelperClass.ConvertIntToBytes(0));
                 sendByte.AddRange(HelperClass.ConvertIntToBytes(seq));
                 s._SystemSocket.Write(sendByte.ToArray());
@@ -229,7 +231,7 @@ namespace DotNetSMPP
                 if (p == null) continue;
                 outputQueue.Remove(p);
                 pdu = p;
-                result = p.command_status.Equals((int)CommandStatus.ESME_ROK);
+                result = p.command_status.Equals(CommandStatus.ESME_ROK);
                 break;
             }
             return result;
@@ -239,7 +241,8 @@ namespace DotNetSMPP
             //here get bind PUD
 
             var sendBytes = new List<byte>();
-            sendBytes.AddRange(Protocol.ProtocolHelper.GetCommondBytes(this.Mode));
+       
+            sendBytes.AddRange(HelperClass.ConvertIntToBytes((uint)this.connectionBindMode));
             sendBytes.AddRange(HelperClass.ConvertIntToBytes(0));
             sendBytes.AddRange(HelperClass.ConvertIntToBytes(seq));
             sendBytes.AddRange(HelperClass.ConvertStringToBytes(this.SystemId));
@@ -258,7 +261,7 @@ namespace DotNetSMPP
         public byte[] GetUnbindPDU(int seq)
         {
             var sendBytes = new List<byte>();
-            sendBytes.AddRange(HelperClass.ConvertIntToBytes((int)CommnadType.unbind));
+            sendBytes.AddRange(HelperClass.ConvertIntToBytes((int)CommanadType.unbind));
             sendBytes.AddRange(HelperClass.ConvertIntToBytes(0));
             sendBytes.AddRange(HelperClass.ConvertIntToBytes(seq));
             sendBytes.InsertRange(0, HelperClass.ConvertIntToBytes(sendBytes.Count + 4));
@@ -283,73 +286,72 @@ namespace DotNetSMPP
             Array.Copy(pkt, 4, command_id, 0, 4);
             var cmd = Helper.HelperClass.ConvertBytesToInt(command_id);
 
-            Console.WriteLine("Packet Recieved : {0}", (CommnadType)cmd);
+            Console.WriteLine("Packet Recieved : {0}", (CommanadType)cmd);
 
-            switch ((CommnadType)cmd)
+            switch ((CommanadType)cmd)
             {
-                case CommnadType.bind_receiver_resp:
-                case CommnadType.bind_transceiver_resp:
-                case CommnadType.bind_transmitter_resp:
-                case CommnadType.unbind_resp:
+                case CommanadType.bind_receiver_resp:
+                case CommanadType.bind_transceiver_resp:
+                case CommanadType.bind_transmitter_resp:
+                case CommanadType.unbind_resp:
                     var p = new BindResponsePDU(pkt);
                     outputQueue.Add(p);
                     break;
-                case CommnadType.submit_sm_resp:
-                case CommnadType.data_sm_resp:
+                case CommanadType.submit_sm_resp:
+                case CommanadType.data_sm_resp:
 
                     var p1 = new SubmitSMRespPDU(pkt);
                     outputQueue.Add(p1);
                     break;
 
-                case CommnadType.deliver_sm:
+                case CommanadType.deliver_sm:
                     var dsr = new UnknownPDU(pkt);
                     outputQueue.Add(dsr);
-                    
-                    SendResponse(CommnadType.deliver_sm_resp, dsr.sequence_number, new byte[] { 0 });
+
+                    SendResponse(CommanadType.deliver_sm_resp, dsr.sequence_number, new byte[] { 0 });
 
 
                     break;
 
-                case CommnadType.enquire_link_resp:
+                case CommanadType.enquire_link_resp:
                     var x123 = new UnknownPDU(pkt);
-                
+
                     //here check status if it is NoK , Need to raise this
                     if (x123.command_status != CommandStatus.ESME_ROK)
                     {
                         UnBind();
-
                     }
 
                     break;
-                case CommnadType.enquire_link:
+                case CommanadType.enquire_link:
                     var x234 = new UnknownPDU(pkt);
-                    SendResponse(CommnadType.enquire_link_resp, x234.sequence_number, new byte[] { });
+                    SendResponse(CommanadType.enquire_link_resp, x234.sequence_number, new byte[] { });
                     break;
                 default:
                     //here send NACK
                     var x = new UnknownPDU(pkt);
                     outputQueue.Add(x);
                     Console.WriteLine("Unknown Packet Recieved {0}", x.command_id.ToString());
-                    SendResponse(CommnadType.generic_nack, x.sequence_number, new byte[] { });
+                    SendResponse(CommanadType.generic_nack, x.sequence_number, new byte[] { });
                     break;
             }
 
         }
-        private void SendResponse(CommnadType commnadType, int sequence_number, byte[] payLoad)
+
+        private void SendResponse(CommanadType commnadType, int sequence_number, byte[] payLoad)
         {
             //
             var sendbyte = new List<byte>();
             //sendbyte.AddRange(HelperClass.ConvertIntToBytes(16));
 
             sendbyte.AddRange(HelperClass.ConvertIntToBytes((uint)commnadType));
-            sendbyte.AddRange(HelperClass.ConvertIntToBytes(CommandStatus.ESME_ROK));
+            sendbyte.AddRange(HelperClass.ConvertIntToBytes((uint)CommandStatus.ESME_ROK));
             sendbyte.AddRange(HelperClass.ConvertIntToBytes(sequence_number));
             sendbyte.AddRange(payLoad);
 
             sendbyte.InsertRange(0, HelperClass.ConvertIntToBytes(sendbyte.Count + 4));
             _SystemSocket.Write(sendbyte.ToArray());
         }
-
 
         ///single msg
         public bool SubmitSm(string sourceAddr, string distinationAddr, string msg)
@@ -358,7 +360,7 @@ namespace DotNetSMPP
             var seq = seqProvider.GetNumber();
 
             var sendBytes = new List<byte>();
-            sendBytes.AddRange(HelperClass.ConvertIntToBytes((int)CommnadType.submit_sm));
+            sendBytes.AddRange(HelperClass.ConvertIntToBytes((int)CommanadType.submit_sm));
             sendBytes.AddRange(HelperClass.ConvertIntToBytes(0));
             sendBytes.AddRange(HelperClass.ConvertIntToBytes(seq));
 
@@ -418,7 +420,7 @@ namespace DotNetSMPP
             var seq = seqProvider.GetNumber();
 
             var sendBytes = new List<byte>();
-            sendBytes.AddRange(HelperClass.ConvertIntToBytes((int)CommnadType.data_sm));
+            sendBytes.AddRange(HelperClass.ConvertIntToBytes((int)CommanadType.data_sm));
             sendBytes.AddRange(HelperClass.ConvertIntToBytes(0));
             sendBytes.AddRange(HelperClass.ConvertIntToBytes(seq));
 
@@ -462,17 +464,16 @@ namespace DotNetSMPP
             return r;
         }
 
-
-        
-
         ///Submit SM Multi
-        public SubmitSMRespPDU DataSm_MultiPart(string sourceAddr, string distinationAddr, string msg, int totalParts, int partIndex)
+        private SubmitSMRespPDU DataSm_MultiPart(string sourceAddr, string distinationAddr, string msg, int totalParts, int partIndex)
         {
             //here form PDU
             var seq = seqProvider.GetNumber();
 
+            var refNum = refProvider.GetNumber();
+
             var sendBytes = new List<byte>();
-            sendBytes.AddRange(HelperClass.ConvertIntToBytes((int)CommnadType.data_sm));
+            sendBytes.AddRange(HelperClass.ConvertIntToBytes((int)CommanadType.data_sm));
             sendBytes.AddRange(HelperClass.ConvertIntToBytes(0));
             sendBytes.AddRange(HelperClass.ConvertIntToBytes(seq));
 
@@ -490,20 +491,25 @@ namespace DotNetSMPP
             sendBytes.Add(HelperClass.NullByte);
 
             sendBytes.Add(esm_class);
-           
+
             sendBytes.Add(receipt);
-        
+
             sendBytes.Add(data_coding);
-           
+
 
             //here add msg
             var msgBytes = HelperClass.ConvertStringToBytes(msg);
-           
-          
+
+
             //add tlv 
             sendBytes.AddRange(HelperClass.ConvertIntToBytes((ushort)TLVTag.message_payload));
             sendBytes.AddRange(HelperClass.ConvertIntToBytes((ushort)msgBytes.Length));
             sendBytes.AddRange(msgBytes);
+
+
+            sendBytes.AddRange(HelperClass.ConvertIntToBytes((ushort)TLVTag.sar_msg_ref_num));
+            sendBytes.AddRange(HelperClass.ConvertIntToBytes((ushort)2));
+            sendBytes.AddRange(HelperClass.ConvertIntToBytes((ushort)refNum));
 
             sendBytes.AddRange(HelperClass.ConvertIntToBytes((ushort)TLVTag.sar_total_segments));
             sendBytes.AddRange(HelperClass.ConvertIntToBytes((ushort)1));
@@ -512,6 +518,8 @@ namespace DotNetSMPP
             sendBytes.AddRange(HelperClass.ConvertIntToBytes((ushort)TLVTag.sar_segment_seqnum));
             sendBytes.AddRange(HelperClass.ConvertIntToBytes((ushort)1));
             sendBytes.Add((byte)partIndex);
+
+
 
             sendBytes.InsertRange(0, HelperClass.ConvertIntToBytes(sendBytes.Count + 4));
             _SystemSocket.Write(sendBytes.ToArray());

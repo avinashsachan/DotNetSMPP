@@ -17,16 +17,6 @@ namespace UnitTest1
                      Assert.AreEqual(str, st2);
         }
 
-        [TestMethod]
-        public void TestCommondBytesAndBytesToCommand()
-        {
-            var str = DotNetSMPP.CommnadType.bind_transceiver;
-
-            var bt =  DotNetSMPP.Protocol.ProtocolHelper.GetCommondBytes(str) ;
-
-            var st2 = DotNetSMPP.Protocol.ProtocolHelper.GetCommondFromBytes(bt);
-         
-            Assert.AreEqual(str, st2);
-        }
+        
     }
 }

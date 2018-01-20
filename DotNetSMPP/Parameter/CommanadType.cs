@@ -1,6 +1,6 @@
 ﻿namespace DotNetSMPP
 {
-    public enum CommnadType : uint
+    public enum CommanadType : uint
     {
 
 
