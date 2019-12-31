@@ -1,9 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27130.2010
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29326.143
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetSMPP", "DotNetSMPP\DotNetSMPP.csproj", "{1B824108-5BF6-4C1A-90A0-4FCB6AF07001}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTestProject1", "UnitTestProject1\UnitTestProject1.csproj", "{DCA803E3-7173-4202-B0DA-46449BA2088A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApp", "TestApp\TestApp.csproj", "{2CA60FCF-A5E3-4642-8E8C-F219DBEA7084}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{1B824108-5BF6-4C1A-90A0-4FCB6AF07001}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1B824108-5BF6-4C1A-90A0-4FCB6AF07001}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1B824108-5BF6-4C1A-90A0-4FCB6AF07001}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DCA803E3-7173-4202-B0DA-46449BA2088A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DCA803E3-7173-4202-B0DA-46449BA2088A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DCA803E3-7173-4202-B0DA-46449BA2088A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DCA803E3-7173-4202-B0DA-46449BA2088A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2CA60FCF-A5E3-4642-8E8C-F219DBEA7084}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2CA60FCF-A5E3-4642-8E8C-F219DBEA7084}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2CA60FCF-A5E3-4642-8E8C-F219DBEA7084}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2CA60FCF-A5E3-4642-8E8C-F219DBEA7084}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
