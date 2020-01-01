@@ -53,8 +53,8 @@
     <Compile Include="Protocol\UnknownPDU.cs" />
     <Compile Include="ReferenceNumberProvider.cs" />
     <Compile Include="SequenceProvider.cs" />
-    <Compile Include="SMPPClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SMPPClient.cs" />
     <Compile Include="SMSTransmisstionMode.cs" />
     <Compile Include="SystemSocket.cs" />
     <Compile Include="Utility.cs" />
