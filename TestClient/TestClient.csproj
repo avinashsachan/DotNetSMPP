@@ -4,15 +4,16 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{1B824108-5BF6-4C1A-90A0-4FCB6AF07001}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DotNetSMPP</RootNamespace>
-    <AssemblyName>DotNetSMPP</AssemblyName>
+    <ProjectGuid>{FB340544-1268-4352-BD27-44545340016D}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>TestClient</RootNamespace>
+    <AssemblyName>TestClient</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -22,6 +23,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -31,6 +33,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -40,29 +43,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BindMode.cs" />
-    <Compile Include="Parameter\CommandStatus.cs" />
-    <Compile Include="Parameter\CommanadType.cs" />
-    <Compile Include="Parameter\InterfaceVersion.cs" />
-    <Compile Include="Parameter\TLVTag.cs" />
-    <Compile Include="Protocol\BindRequestPDU.cs" />
-    <Compile Include="Protocol\PDU.cs" />
-    <Compile Include="Protocol\ProtocolHelper.cs" />
-    <Compile Include="Protocol\BindResponsePDU.cs" />
-    <Compile Include="Protocol\SubmitSMRespPDU.cs" />
-    <Compile Include="Protocol\UnknownPDU.cs" />
-    <Compile Include="ReferenceNumberProvider.cs" />
-    <Compile Include="SequenceProvider.cs" />
-    <Compile Include="SMPPClient.cs" />
+    <Compile Include="FromConfig.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SMSTransmisstionMode.cs" />
-    <Compile Include="SystemSocket.cs" />
-    <Compile Include="Utility.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Helper\Helper.csproj">
-      <Project>{192a0d5a-d733-445e-9c9a-4ebf7aaa27ff}</Project>
-      <Name>Helper</Name>
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DotNetSMPP\DotNetSMPP.csproj">
+      <Project>{1b824108-5bf6-4c1a-90a0-4fcb6af07001}</Project>
+      <Name>DotNetSMPP</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
