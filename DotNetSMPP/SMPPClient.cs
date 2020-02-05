@@ -1,11 +1,4 @@
-﻿/*
-
- 
- 
- */
-
-using DotNetSMPP.Parameter;
-using Helper;
+﻿using DotNetSMPP.Parameter; 
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -163,8 +156,9 @@ namespace DotNetSMPP
                 //Here actually socket is disconnected but send disconnect
                 s._SystemSocket.Disconnect();
             }
-            catch (Exception ex)
+            catch //(Exception ex)
             {
+                //TODO:
 
             }
         }
@@ -179,10 +173,10 @@ namespace DotNetSMPP
 
                 //here build ensure link packet
                 var sendByte = new List<byte>();
-                sendByte.AddRange(HelperClass.ConvertIntToBytes(16));
-                sendByte.AddRange(HelperClass.ConvertIntToBytes((uint)CommanadType.enquire_link));
-                sendByte.AddRange(HelperClass.ConvertIntToBytes(0));
-                sendByte.AddRange(HelperClass.ConvertIntToBytes(seq));
+                sendByte.AddRange(Utility.ConvertIntToBytes(16));
+                sendByte.AddRange(Utility.ConvertIntToBytes((uint)CommanadType.enquire_link));
+                sendByte.AddRange(Utility.ConvertIntToBytes(0));
+                sendByte.AddRange(Utility.ConvertIntToBytes(seq));
                 s._SystemSocket.Write(sendByte.ToArray());
                 System.Threading.Thread.Sleep(15 * 1000);
             }
@@ -242,29 +236,29 @@ namespace DotNetSMPP
 
             var sendBytes = new List<byte>();
 
-            sendBytes.AddRange(HelperClass.ConvertIntToBytes((uint)this.connectionBindMode));
-            sendBytes.AddRange(HelperClass.ConvertIntToBytes(0));
-            sendBytes.AddRange(HelperClass.ConvertIntToBytes(seq));
-            sendBytes.AddRange(HelperClass.ConvertStringToBytes(this.SystemId));
-            sendBytes.Add(HelperClass.NullByte);
-            sendBytes.AddRange(HelperClass.ConvertStringToBytes(this.Password));
-            sendBytes.Add(HelperClass.NullByte);
-            sendBytes.AddRange(HelperClass.ConvertStringToBytes(this.SystemType));
-            sendBytes.Add(HelperClass.NullByte);
-            sendBytes.Add(HelperClass.ConvertIntToBytes(((int)this.interfaceVersion))[3]);
+            sendBytes.AddRange(Utility.ConvertIntToBytes((uint)this.connectionBindMode));
+            sendBytes.AddRange(Utility.ConvertIntToBytes(0));
+            sendBytes.AddRange(Utility.ConvertIntToBytes(seq));
+            sendBytes.AddRange(Utility.ConvertStringToBytes(this.SystemId));
+            sendBytes.Add(Utility.NullByte);
+            sendBytes.AddRange(Utility.ConvertStringToBytes(this.Password));
+            sendBytes.Add(Utility.NullByte);
+            sendBytes.AddRange(Utility.ConvertStringToBytes(this.SystemType));
+            sendBytes.Add(Utility.NullByte);
+            sendBytes.Add(Utility.ConvertIntToBytes(((int)this.interfaceVersion))[3]);
             sendBytes.Add(this.source_ton);
             sendBytes.Add(this.source_npi);
-            sendBytes.Add(HelperClass.NullByte);
-            sendBytes.InsertRange(0, HelperClass.ConvertIntToBytes(sendBytes.Count + 4));
+            sendBytes.Add(Utility.NullByte);
+            sendBytes.InsertRange(0, Utility.ConvertIntToBytes(sendBytes.Count + 4));
             return sendBytes.ToArray();
         }
         public byte[] GetUnbindPDU(int seq)
         {
             var sendBytes = new List<byte>();
-            sendBytes.AddRange(HelperClass.ConvertIntToBytes((int)CommanadType.unbind));
-            sendBytes.AddRange(HelperClass.ConvertIntToBytes(0));
-            sendBytes.AddRange(HelperClass.ConvertIntToBytes(seq));
-            sendBytes.InsertRange(0, HelperClass.ConvertIntToBytes(sendBytes.Count + 4));
+            sendBytes.AddRange(Utility.ConvertIntToBytes((int)CommanadType.unbind));
+            sendBytes.AddRange(Utility.ConvertIntToBytes(0));
+            sendBytes.AddRange(Utility.ConvertIntToBytes(seq));
+            sendBytes.InsertRange(0, Utility.ConvertIntToBytes(sendBytes.Count + 4));
             return sendBytes.ToArray();
         }
         private void OnPacketRecived(object sender, EventArgs e)
@@ -284,7 +278,7 @@ namespace DotNetSMPP
             //var command_status = new byte[4];
             //var sequence_number = new byte[4];
             Array.Copy(pkt, 4, command_id, 0, 4);
-            var cmd = Helper.HelperClass.ConvertBytesToInt(command_id);
+            var cmd = Utility.ConvertBytesToInt(command_id);
 
             Console.WriteLine("Packet Recieved : {0}", (CommanadType)cmd);
 
@@ -342,14 +336,14 @@ namespace DotNetSMPP
         {
             //
             var sendbyte = new List<byte>();
-            //sendbyte.AddRange(HelperClass.ConvertIntToBytes(16));
+            //sendbyte.AddRange(Utility.ConvertIntToBytes(16));
 
-            sendbyte.AddRange(HelperClass.ConvertIntToBytes((uint)commnadType));
-            sendbyte.AddRange(HelperClass.ConvertIntToBytes((uint)CommandStatus.ESME_ROK));
-            sendbyte.AddRange(HelperClass.ConvertIntToBytes(sequence_number));
+            sendbyte.AddRange(Utility.ConvertIntToBytes((uint)commnadType));
+            sendbyte.AddRange(Utility.ConvertIntToBytes((uint)CommandStatus.ESME_ROK));
+            sendbyte.AddRange(Utility.ConvertIntToBytes(sequence_number));
             sendbyte.AddRange(payLoad);
 
-            sendbyte.InsertRange(0, HelperClass.ConvertIntToBytes(sendbyte.Count + 4));
+            sendbyte.InsertRange(0, Utility.ConvertIntToBytes(sendbyte.Count + 4));
             _SystemSocket.Write(sendbyte.ToArray());
         }
 
@@ -360,22 +354,22 @@ namespace DotNetSMPP
             var seq = seqProvider.GetNumber();
 
             var sendBytes = new List<byte>();
-            sendBytes.AddRange(HelperClass.ConvertIntToBytes((int)CommanadType.submit_sm));
-            sendBytes.AddRange(HelperClass.ConvertIntToBytes(0));
-            sendBytes.AddRange(HelperClass.ConvertIntToBytes(seq));
+            sendBytes.AddRange(Utility.ConvertIntToBytes((int)CommanadType.submit_sm));
+            sendBytes.AddRange(Utility.ConvertIntToBytes(0));
+            sendBytes.AddRange(Utility.ConvertIntToBytes(seq));
 
             //
             sendBytes.Add(service_type);
             sendBytes.Add(source_ton);
             sendBytes.Add(source_npi);
 
-            sendBytes.AddRange(HelperClass.ConvertStringToBytes(string.IsNullOrEmpty(sourceAddr) ? source_addr : sourceAddr));
-            sendBytes.Add(HelperClass.NullByte);
+            sendBytes.AddRange(Utility.ConvertStringToBytes(string.IsNullOrEmpty(sourceAddr) ? source_addr : sourceAddr));
+            sendBytes.Add(Utility.NullByte);
 
             sendBytes.Add(destination_ton);
             sendBytes.Add(destination_npi);
-            sendBytes.AddRange(HelperClass.ConvertStringToBytes(distinationAddr));
-            sendBytes.Add(HelperClass.NullByte);
+            sendBytes.AddRange(Utility.ConvertStringToBytes(distinationAddr));
+            sendBytes.Add(Utility.NullByte);
 
             sendBytes.Add(esm_class);
             sendBytes.Add(protocol_id);
@@ -390,7 +384,7 @@ namespace DotNetSMPP
 
 
             //here add msg
-            var msgBytes = HelperClass.ConvertStringToBytes(msg);
+            var msgBytes = Utility.ConvertStringToBytes(msg);
             //sendBytes.Add((byte)msgBytes.Length);
             //sendBytes.AddRange(msgBytes);
 
@@ -398,12 +392,12 @@ namespace DotNetSMPP
             sendBytes.Add((byte)0);
 
             //add tlv 
-            sendBytes.AddRange(HelperClass.ConvertIntToBytes((ushort)TLVTag.message_payload));
-            sendBytes.AddRange(HelperClass.ConvertIntToBytes((ushort)msgBytes.Length));
+            sendBytes.AddRange(Utility.ConvertIntToBytes((ushort)TLVTag.message_payload));
+            sendBytes.AddRange(Utility.ConvertIntToBytes((ushort)msgBytes.Length));
             sendBytes.AddRange(msgBytes);
 
 
-            sendBytes.InsertRange(0, HelperClass.ConvertIntToBytes(sendBytes.Count + 4));
+            sendBytes.InsertRange(0, Utility.ConvertIntToBytes(sendBytes.Count + 4));
             _SystemSocket.Write(sendBytes.ToArray());
 
             PDU p = null;
@@ -420,22 +414,22 @@ namespace DotNetSMPP
             var seq = seqProvider.GetNumber();
 
             var sendBytes = new List<byte>();
-            sendBytes.AddRange(HelperClass.ConvertIntToBytes((int)CommanadType.data_sm));
-            sendBytes.AddRange(HelperClass.ConvertIntToBytes(0));
-            sendBytes.AddRange(HelperClass.ConvertIntToBytes(seq));
+            sendBytes.AddRange(Utility.ConvertIntToBytes((int)CommanadType.data_sm));
+            sendBytes.AddRange(Utility.ConvertIntToBytes(0));
+            sendBytes.AddRange(Utility.ConvertIntToBytes(seq));
 
             //
             sendBytes.Add(service_type);
             sendBytes.Add(source_ton);
             sendBytes.Add(source_npi);
 
-            sendBytes.AddRange(HelperClass.ConvertStringToBytes(string.IsNullOrEmpty(sourceAddr) ? source_addr : sourceAddr));
-            sendBytes.Add(HelperClass.NullByte);
+            sendBytes.AddRange(Utility.ConvertStringToBytes(string.IsNullOrEmpty(sourceAddr) ? source_addr : sourceAddr));
+            sendBytes.Add(Utility.NullByte);
 
             sendBytes.Add(destination_ton);
             sendBytes.Add(destination_npi);
-            sendBytes.AddRange(HelperClass.ConvertStringToBytes(distinationAddr));
-            sendBytes.Add(HelperClass.NullByte);
+            sendBytes.AddRange(Utility.ConvertStringToBytes(distinationAddr));
+            sendBytes.Add(Utility.NullByte);
 
             sendBytes.Add(esm_class);
             sendBytes.Add(receipt);
@@ -444,15 +438,15 @@ namespace DotNetSMPP
 
 
             //here add msg
-            var msgBytes = HelperClass.ConvertStringToBytes(msg);
+            var msgBytes = Utility.ConvertStringToBytes(msg);
 
             //add tlv 
-            sendBytes.AddRange(HelperClass.ConvertIntToBytes((ushort)TLVTag.message_payload));
-            sendBytes.AddRange(HelperClass.ConvertIntToBytes((ushort)msgBytes.Length));
+            sendBytes.AddRange(Utility.ConvertIntToBytes((ushort)TLVTag.message_payload));
+            sendBytes.AddRange(Utility.ConvertIntToBytes((ushort)msgBytes.Length));
             sendBytes.AddRange(msgBytes);
 
 
-            sendBytes.InsertRange(0, HelperClass.ConvertIntToBytes(sendBytes.Count + 4));
+            sendBytes.InsertRange(0, Utility.ConvertIntToBytes(sendBytes.Count + 4));
             _SystemSocket.Write(sendBytes.ToArray());
 
             PDU p = null;
@@ -473,22 +467,22 @@ namespace DotNetSMPP
             var refNum = refProvider.GetNumber();
 
             var sendBytes = new List<byte>();
-            sendBytes.AddRange(HelperClass.ConvertIntToBytes((int)CommanadType.data_sm));
-            sendBytes.AddRange(HelperClass.ConvertIntToBytes(0));
-            sendBytes.AddRange(HelperClass.ConvertIntToBytes(seq));
+            sendBytes.AddRange(Utility.ConvertIntToBytes((int)CommanadType.data_sm));
+            sendBytes.AddRange(Utility.ConvertIntToBytes(0));
+            sendBytes.AddRange(Utility.ConvertIntToBytes(seq));
 
             //
             sendBytes.Add(service_type);
             sendBytes.Add(source_ton);
             sendBytes.Add(source_npi);
 
-            sendBytes.AddRange(HelperClass.ConvertStringToBytes(string.IsNullOrEmpty(sourceAddr) ? source_addr : sourceAddr));
-            sendBytes.Add(HelperClass.NullByte);
+            sendBytes.AddRange(Utility.ConvertStringToBytes(string.IsNullOrEmpty(sourceAddr) ? source_addr : sourceAddr));
+            sendBytes.Add(Utility.NullByte);
 
             sendBytes.Add(destination_ton);
             sendBytes.Add(destination_npi);
-            sendBytes.AddRange(HelperClass.ConvertStringToBytes(distinationAddr));
-            sendBytes.Add(HelperClass.NullByte);
+            sendBytes.AddRange(Utility.ConvertStringToBytes(distinationAddr));
+            sendBytes.Add(Utility.NullByte);
 
             sendBytes.Add(esm_class);
 
@@ -498,30 +492,30 @@ namespace DotNetSMPP
 
 
             //here add msg
-            var msgBytes = HelperClass.ConvertStringToBytes(msg);
+            var msgBytes = Utility.ConvertStringToBytes(msg);
 
 
             //add tlv 
-            sendBytes.AddRange(HelperClass.ConvertIntToBytes((ushort)TLVTag.message_payload));
-            sendBytes.AddRange(HelperClass.ConvertIntToBytes((ushort)msgBytes.Length));
+            sendBytes.AddRange(Utility.ConvertIntToBytes((ushort)TLVTag.message_payload));
+            sendBytes.AddRange(Utility.ConvertIntToBytes((ushort)msgBytes.Length));
             sendBytes.AddRange(msgBytes);
 
 
-            sendBytes.AddRange(HelperClass.ConvertIntToBytes((ushort)TLVTag.sar_msg_ref_num));
-            sendBytes.AddRange(HelperClass.ConvertIntToBytes((ushort)2));
-            sendBytes.AddRange(HelperClass.ConvertIntToBytes((ushort)refNum));
+            sendBytes.AddRange(Utility.ConvertIntToBytes((ushort)TLVTag.sar_msg_ref_num));
+            sendBytes.AddRange(Utility.ConvertIntToBytes((ushort)2));
+            sendBytes.AddRange(Utility.ConvertIntToBytes((ushort)refNum));
 
-            sendBytes.AddRange(HelperClass.ConvertIntToBytes((ushort)TLVTag.sar_total_segments));
-            sendBytes.AddRange(HelperClass.ConvertIntToBytes((ushort)1));
+            sendBytes.AddRange(Utility.ConvertIntToBytes((ushort)TLVTag.sar_total_segments));
+            sendBytes.AddRange(Utility.ConvertIntToBytes((ushort)1));
             sendBytes.Add((byte)totalParts);
 
-            sendBytes.AddRange(HelperClass.ConvertIntToBytes((ushort)TLVTag.sar_segment_seqnum));
-            sendBytes.AddRange(HelperClass.ConvertIntToBytes((ushort)1));
+            sendBytes.AddRange(Utility.ConvertIntToBytes((ushort)TLVTag.sar_segment_seqnum));
+            sendBytes.AddRange(Utility.ConvertIntToBytes((ushort)1));
             sendBytes.Add((byte)partIndex);
 
 
 
-            sendBytes.InsertRange(0, HelperClass.ConvertIntToBytes(sendBytes.Count + 4));
+            sendBytes.InsertRange(0, Utility.ConvertIntToBytes(sendBytes.Count + 4));
             _SystemSocket.Write(sendBytes.ToArray());
 
             PDU p = null;

@@ -21,10 +21,10 @@ namespace DotNetSMPP
             Array.Copy(pkt, 8, command_status, 0, 4);
             Array.Copy(pkt, 12, sequence_number, 0, 4);
 
-            this.command_length = Helper.HelperClass.ConvertBytesToInt(command_id);
-            this.command_id = (CommanadType)Helper.HelperClass.ConvertBytesToInt(command_id);
-            this.command_status = (CommandStatus)Helper.HelperClass.ConvertBytesToInt(command_status);
-            this.sequence_number = Helper.HelperClass.ConvertBytesToInt(sequence_number);
+            this.command_length = Utility.ConvertBytesToInt(command_id);
+            this.command_id = (CommanadType)Utility.ConvertBytesToInt(command_id);
+            this.command_status = (CommandStatus)Utility.ConvertBytesToInt(command_status);
+            this.sequence_number = Utility.ConvertBytesToInt(sequence_number);
         }
 
 

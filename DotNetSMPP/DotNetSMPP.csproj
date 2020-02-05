@@ -59,11 +59,5 @@
     <Compile Include="SystemSocket.cs" />
     <Compile Include="Utility.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Helper\Helper.csproj">
-      <Project>{192a0d5a-d733-445e-9c9a-4ebf7aaa27ff}</Project>
-      <Name>Helper</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -27,11 +27,11 @@ namespace DotNetSMPP
             Array.Copy(pkt, 16, msgId, 0, msgId.Length);
 
 
-            this.command_length = Helper.HelperClass.ConvertBytesToInt(command_id);
-            this.command_id = (CommanadType)Helper.HelperClass.ConvertBytesToInt(command_id);
-            this.command_status = (CommandStatus)Helper.HelperClass.ConvertBytesToInt(command_status);
-            this.sequence_number = Helper.HelperClass.ConvertBytesToInt(sequence_number);
-            this.message_id = Helper.HelperClass.ConvertBytesToString(msgId);
+            this.command_length = Utility.ConvertBytesToInt(command_id);
+            this.command_id = (CommanadType)Utility.ConvertBytesToInt(command_id);
+            this.command_status = (CommandStatus)Utility.ConvertBytesToInt(command_status);
+            this.sequence_number = Utility.ConvertBytesToInt(sequence_number);
+            this.message_id = Utility.ConvertBytesToString(msgId);
         }
     }
 }
